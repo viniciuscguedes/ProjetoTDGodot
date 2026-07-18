@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://7obpawgu4ggs"
-path="res://.godot/imported/treeGreen_large.png-7743d5ba72b4bc6da8dea55fa475a8fa.ctex"
+uid="uid://intyt2lk6ni1"
+path="res://.godot/imported/BackGround.png-78a8cedb9713094d986c8429cff5c819.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Environment/Props/treeGreen_large.png"
-dest_files=["res://.godot/imported/treeGreen_large.png-7743d5ba72b4bc6da8dea55fa475a8fa.ctex"]
+source_file="res://Assets/UI/Art/BackGround.png"
+dest_files=["res://.godot/imported/BackGround.png-78a8cedb9713094d986c8429cff5c819.ctex"]
 
 [params]
 

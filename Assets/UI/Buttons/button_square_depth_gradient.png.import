@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://7obpawgu4ggs"
-path="res://.godot/imported/treeGreen_large.png-7743d5ba72b4bc6da8dea55fa475a8fa.ctex"
+uid="uid://cyeu7ha5l7m34"
+path="res://.godot/imported/button_square_depth_gradient.png-f0ea404eba728606c8eb6ad9bfc3d170.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Environment/Props/treeGreen_large.png"
-dest_files=["res://.godot/imported/treeGreen_large.png-7743d5ba72b4bc6da8dea55fa475a8fa.ctex"]
+source_file="res://Assets/UI/Buttons/button_square_depth_gradient.png"
+dest_files=["res://.godot/imported/button_square_depth_gradient.png-f0ea404eba728606c8eb6ad9bfc3d170.ctex"]
 
 [params]
 

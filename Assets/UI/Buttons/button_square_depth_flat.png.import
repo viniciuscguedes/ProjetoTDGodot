@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://7obpawgu4ggs"
-path="res://.godot/imported/treeGreen_large.png-7743d5ba72b4bc6da8dea55fa475a8fa.ctex"
+uid="uid://d07uoyycbfkbl"
+path="res://.godot/imported/button_square_depth_flat.png-105af4568ba9f5ed678120e6600b6cdf.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Environment/Props/treeGreen_large.png"
-dest_files=["res://.godot/imported/treeGreen_large.png-7743d5ba72b4bc6da8dea55fa475a8fa.ctex"]
+source_file="res://Assets/UI/Buttons/button_square_depth_flat.png"
+dest_files=["res://.godot/imported/button_square_depth_flat.png-105af4568ba9f5ed678120e6600b6cdf.ctex"]
 
 [params]
 
