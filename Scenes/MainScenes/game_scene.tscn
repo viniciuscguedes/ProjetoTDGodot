@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://cr38klqxqpcei"]
+
+[ext_resource type="Script" uid="uid://d3f4imsrfyyr8" path="res://Scenes/MainScenes/game_scene.gd" id="1_2u2le"]
+[ext_resource type="PackedScene" uid="uid://bnm3i13dfm2bu" path="res://Scenes/Maps/Map1.tscn" id="1_akvmk"]
+[ext_resource type="Texture2D" uid="uid://d07uoyycbfkbl" path="res://Assets/UI/Buttons/button_square_depth_flat.png" id="2_3x1ga"]
+[ext_resource type="Texture2D" uid="uid://bovoblaoptslx" path="res://Assets/Towers/towerDefense_tile249.png" id="3_2u2le"]
+[ext_resource type="Script" uid="uid://goxc7ieuxtlm" path="res://Scenes/MainScenes/ui.gd" id="3_g2kuy"]
+[ext_resource type="Texture2D" uid="uid://cgoghipov7klx" path="res://Assets/Towers/towerDefense_tile251.png" id="4_g2kuy"]
+
+[node name="GameScene" type="Node2D" unique_id=1819468004]
+script = ExtResource("1_2u2le")
+
+[node name="Map1" parent="." unique_id=2065031549 instance=ExtResource("1_akvmk")]
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=228710708]
+script = ExtResource("3_g2kuy")
+
+[node name="HUD" type="Control" parent="UI" unique_id=1807144647]
+layout_mode = 3
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+grow_vertical = 2
+
+[node name="BuildBar" type="VBoxContainer" parent="UI/HUD" unique_id=1823987231]
+custom_minimum_size = Vector2(100, 400)
+layout_mode = 1
+offset_right = 100.0
+offset_bottom = 400.0
+theme_override_constants/separation = 25
+
+[node name="Gun" type="TextureButton" parent="UI/HUD/BuildBar" unique_id=1265533542 groups=["build_buttons"]]
+custom_minimum_size = Vector2(100, 80)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_3x1ga")
+stretch_mode = 0
+
+[node name="Icon" type="TextureRect" parent="UI/HUD/BuildBar/Gun" unique_id=1030897479]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_2u2le")
+
+[node name="Missile" type="TextureButton" parent="UI/HUD/BuildBar" unique_id=743100532 groups=["build_buttons"]]
+custom_minimum_size = Vector2(100, 80)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("2_3x1ga")
+stretch_mode = 0
+
+[node name="Icon" type="TextureRect" parent="UI/HUD/BuildBar/Missile" unique_id=1963386866]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_g2kuy")
