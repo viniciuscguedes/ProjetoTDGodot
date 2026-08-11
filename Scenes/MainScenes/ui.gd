@@ -1,19 +1,51 @@
 extends CanvasLayer
 
 
-func set_tower_preview(tower_type, mouse_position):
-
-	var drag_tower = load("res://Scenes/Turrets/" + tower_type + ".tscn").instantiate()
-	drag_tower.set_name("DragTower")
-	drag_tower.modulate = Color("ad54ff")
+func set_tower_preview(tower_type: String, _mouse_position: Vector2) -> void:
+	var old_preview = get_node_or_null("TowerPreview")
+	if old_preview == null:
+		old_preview = get_node_or_null("HUD/TowerPreview")
+	if old_preview:
+		old_preview.free()
+		
+	var tower_scene = load("res://Scenes/Turrets/" + tower_type + ".tscn")
+	var drag_tower = tower_scene.instantiate()
+	drag_tower.name = "DragTower"
+	drag_tower.position = Vector2.ZERO 
+	
+	var range_texture = Sprite2D.new()
+	range_texture.name = "RangeOverlay"
+	range_texture.position = Vector2.ZERO
+	
+	var scaling = GameData.tower_data[tower_type]["range"] / 700.0
+	range_texture.scale = Vector2(scaling, scaling)
+	range_texture.texture = load("res://Assets/UI/range_overlay.png")
+	range_texture.modulate = Color("45454556")
+	
 	var control = Control.new()
-	control.add_child(drag_tower, true)
-	control.set_position(mouse_position)
-	control.set_name("TowerPreview")
-	add_child(control, true)
-	move_child(get_node("TowerPreview"), 0)
+	control.name = "TowerPreview"
+	
 
-func update_tower_preview(new_position, color):
-	get_node("TowerPreview").set_position(new_position)
-	if get_node("TowerPreview/DragTower").modulate != Color(color):
-		get_node("TowerPreview/DragTower").modulate = Color(color)
+	control.add_child(range_texture)
+	control.add_child(drag_tower)
+	
+	control.position = get_viewport().get_mouse_position()
+	
+	add_child(control)
+	move_child(control, 0)
+
+func update_tower_preview(_new_position, color):
+	var tower_preview = get_node_or_null("TowerPreview")
+	if tower_preview == null:
+		tower_preview = get_node_or_null("HUD/TowerPreview")
+	
+	if tower_preview:
+		tower_preview.position = get_viewport().get_mouse_position()
+		
+		var drag_tower = tower_preview.get_node_or_null("DragTower")
+		if drag_tower:
+			drag_tower.modulate = Color(color)
+			
+		var range_sprite = tower_preview.get_node_or_null("RangeOverlay")
+		if range_sprite:
+			range_sprite.modulate = Color(color)
