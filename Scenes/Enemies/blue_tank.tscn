@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://htcg4ia8poyc"]
+
+[ext_resource type="Script" uid="uid://c37tx0hefesbs" path="res://Scenes/Enemies/enemy_path.gd" id="1_a3nyt"]
+[ext_resource type="Texture2D" uid="uid://dy1n2wf027mot" path="res://Assets/Enemies/tank_blue.png" id="1_cpr6n"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_243ha"]
+size = Vector2(40, 20)
+
+[node name="BlueTank" type="PathFollow2D" unique_id=1440403957]
+script = ExtResource("1_a3nyt")
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=1221246533]
+
+[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D" unique_id=1322322556]
+rotation = -1.5707964
+texture = ExtResource("1_cpr6n")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D" unique_id=1078448600]
+shape = SubResource("RectangleShape2D_243ha")

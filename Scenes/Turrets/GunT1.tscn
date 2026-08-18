@@ -4,6 +4,8 @@
 [ext_resource type="Script" uid="uid://4yrpcxemvoaf" path="res://Scenes/Turrets/GunT1.gd" id="1_cewgw"]
 [ext_resource type="Texture2D" uid="uid://bovoblaoptslx" path="res://Assets/Towers/towerDefense_tile249.png" id="2_f6lbo"]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_243ha"]
+
 [node name="GunT1" type="Node2D" unique_id=1989249670]
 script = ExtResource("1_cewgw")
 
@@ -16,3 +18,11 @@ offset = Vector2(12, 0)
 
 [node name="Muzzle" type="Marker2D" parent="Turret" unique_id=981201652]
 position = Vector2(43, 0)
+
+[node name="Range" type="Area2D" parent="." unique_id=1145599030]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Range" unique_id=1435496739]
+shape = SubResource("CircleShape2D_243ha")
+
+[connection signal="body_entered" from="Range" to="." method="_on_range_body_entered"]
+[connection signal="body_exited" from="Range" to="." method="_on_range_body_exited"]

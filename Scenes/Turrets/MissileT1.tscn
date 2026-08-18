@@ -8,6 +8,8 @@
 script/source = "extends \"res://Scenes/Turrets/Turrets.gd\"
 "
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_csrxm"]
+
 [node name="MissileT1" type="Node2D" unique_id=564105092]
 script = SubResource("GDScript_csrxm")
 
@@ -24,3 +26,11 @@ texture = ExtResource("3_qaqgq")
 [node name="Missile2" type="Sprite2D" parent="Turret" unique_id=718231525]
 position = Vector2(5, 10)
 texture = ExtResource("3_qaqgq")
+
+[node name="Range" type="Area2D" parent="." unique_id=1121197315]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Range" unique_id=969312914]
+shape = SubResource("CircleShape2D_csrxm")
+
+[connection signal="body_entered" from="Range" to="." method="_on_range_body_entered"]
+[connection signal="body_exited" from="Range" to="." method="_on_range_body_exited"]

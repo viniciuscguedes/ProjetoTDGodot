@@ -8,10 +8,14 @@ var build_tile
 var build_location
 var build_type 
 
+var current_wave = 0
+var enemies_in_wave = 0
+
 func _ready():
 	map_node = get_node("Map1")
 	for i in get_tree().get_nodes_in_group("build_buttons"):
 		i.pressed.connect(initiate_build_mode.bind(i.name))
+
 	
 func _process(_delta):
 	if build_mode:
@@ -64,10 +68,43 @@ func cancel_build_mode():
 func verify_and_build():
 	if build_valid:
 		var new_tower = load("res://Scenes/Turrets/" + build_type + ".tscn").instantiate()
-		new_tower.position = build_location
+		
+		new_tower.tower_type = build_type
+		new_tower.built = true
+		new_tower.global_position = build_location
+		
 		map_node.get_node("Turrets").add_child(new_tower, true)
+		map_node.get_node("TowerExclusion").set_cell(build_tile, 0, Vector2i(0, 0))
+		
+		cancel_build_mode()
 		
 
 		map_node.get_node("TowerExclusion").set_cell(build_tile, 0, Vector2i(0, 0))
 		
 		cancel_build_mode()
+
+func start_next_wave():
+	var wave_data = retrieve_wave_data()
+	await get_tree().create_timer(0.2).timeout
+	spawn_enemies(wave_data)
+
+func retrieve_wave_data():
+	var wave_data = [["blue_tank", 3.0], ["blue_tank", 0.1]]
+	current_wave += 1
+	enemies_in_wave = wave_data.size()
+	return wave_data
+
+func spawn_enemies(wave_data):
+	var path_1 = map_node.get_node("Path1")
+	var path_2 = map_node.get_node("Path2")
+	var paths = [path_1, path_2]
+
+	for i in wave_data:
+		var enemy_scene = load("res://Scenes/Enemies/" + i[0] + ".tscn")
+		var new_enemy = enemy_scene.instantiate()
+		
+		var chosen_path = paths.pick_random()
+		
+		chosen_path.add_child(new_enemy, true)
+		
+		await get_tree().create_timer(i[1]).timeout
