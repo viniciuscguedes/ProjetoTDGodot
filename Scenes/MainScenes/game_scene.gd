@@ -16,19 +16,17 @@ func _ready():
 	for i in get_tree().get_nodes_in_group("build_buttons"):
 		i.pressed.connect(initiate_build_mode.bind(i.name))
 
-	
 func _process(_delta):
 	if build_mode:
 		update_tower_preview()
-	
+
 func _unhandled_input(event):
 	if build_mode:
 		if event.is_action_released("ui_cancel") or (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed == false):
 			cancel_build_mode()
-			
 		elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed == false:
 			verify_and_build()
-	
+
 func initiate_build_mode(tower_type):
 	if build_mode:
 		cancel_build_mode()
@@ -37,7 +35,6 @@ func initiate_build_mode(tower_type):
 	build_mode = true 
 	
 	get_node("UI").set_tower_preview(build_type, get_global_mouse_position())
-	
 	update_tower_preview()
 
 func update_tower_preview():
@@ -64,21 +61,22 @@ func cancel_build_mode():
 		
 	if preview:
 		preview.queue_free()
-	
+
 func verify_and_build():
 	if build_valid:
-		var new_tower = load("res://Scenes/Turrets/" + build_type + ".tscn").instantiate()
+		var tower_scene = load("res://Scenes/Turrets/" + build_type + ".tscn")
+		var new_tower = tower_scene.instantiate()
 		
-		new_tower.tower_type = build_type
-		new_tower.built = true
 		new_tower.global_position = build_location
 		
+		if "built" in new_tower:
+			new_tower.built = true
+		if "tower_type" in new_tower:
+			new_tower.tower_type = build_type
+		if "category" in new_tower:
+			new_tower.category = GameData.tower_data[build_type]["category"]
+		
 		map_node.get_node("Turrets").add_child(new_tower, true)
-		map_node.get_node("TowerExclusion").set_cell(build_tile, 0, Vector2i(0, 0))
-		
-		cancel_build_mode()
-		
-
 		map_node.get_node("TowerExclusion").set_cell(build_tile, 0, Vector2i(0, 0))
 		
 		cancel_build_mode()
@@ -106,5 +104,4 @@ func spawn_enemies(wave_data):
 		var chosen_path = paths.pick_random()
 		
 		chosen_path.add_child(new_enemy, true)
-		
 		await get_tree().create_timer(i[1]).timeout
