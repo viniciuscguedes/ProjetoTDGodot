@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TowerResource" format=3 uid="uid://svsn00lipsnx"]
+
+[ext_resource type="Script" uid="uid://bxrklaenrp37d" path="res://Resources/CustomResources/TowerResources.gd" id="1_q6cgl"]
+
+[resource]
+script = ExtResource("1_q6cgl")
+damage = 50
+rof = 1.0
+range_radius = 500.0
+metadata/_custom_type_script = "uid://bxrklaenrp37d"

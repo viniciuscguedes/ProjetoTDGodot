@@ -1,23 +1,21 @@
+class_name Turret
 extends Node2D
 
-var enemy_array = []
-@export var tower_type: String = "GunT1"
-var built = false
-var enemy = null
-var can_fire = true
-var category: String
+var enemy_array: Array = []
+@export var tower_resource: TowerResource
+
+var built: bool = false
+var enemy: Node2D = null
+var can_fire: bool = true
 
 @onready var turret: Node2D = get_node_or_null("Turret")
 
 func _ready() -> void:
-	if built:
-		if GameData.tower_data.has(tower_type):
-			category = GameData.tower_data[tower_type].get("category", "")
-			
-			if has_node("Range/CollisionShape2D"):
-				var range_shape = $Range/CollisionShape2D.shape.duplicate()
-				range_shape.radius = 0.5 * GameData.tower_data[tower_type]["range"]
-				$Range/CollisionShape2D.shape = range_shape
+	if built and tower_resource:
+		if has_node("Range/CollisionShape2D"):
+			var range_shape = $Range/CollisionShape2D.shape.duplicate()
+			range_shape.radius = 0.5 * tower_resource.range_radius
+			$Range/CollisionShape2D.shape = range_shape
 
 func _physics_process(_delta: float) -> void:
 	if enemy_array.size() != 0 and built:
@@ -47,10 +45,10 @@ func select_enemy() -> void:
 func fire() -> void:
 	can_fire = false
 	
-	if is_instance_valid(enemy):
-		enemy.on_hit(GameData.tower_data[tower_type]["damage"])
+	if is_instance_valid(enemy) and tower_resource:
+		enemy.on_hit(tower_resource.damage)
 		
-	await get_tree().create_timer(GameData.tower_data[tower_type]["rof"]).timeout
+	await get_tree().create_timer(tower_resource.rof).timeout
 	can_fire = true
 
 func _on_range_body_entered(body: Node2D) -> void:

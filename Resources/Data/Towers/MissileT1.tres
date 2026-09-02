@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TowerResource" format=3 uid="uid://dab558f8a1x8u"]
+
+[ext_resource type="Script" uid="uid://bxrklaenrp37d" path="res://Resources/CustomResources/TowerResources.gd" id="1_w6puk"]
+
+[resource]
+script = ExtResource("1_w6puk")
+damage = 100
+rof = 3.0
+range_radius = 700.0
+category = "Missile"
+metadata/_custom_type_script = "uid://bxrklaenrp37d"

@@ -17,20 +17,19 @@ func set_tower_preview(tower_type: String, _mouse_position: Vector2) -> void:
 	range_texture.name = "RangeOverlay"
 	range_texture.position = Vector2.ZERO
 	
-	var scaling = GameData.tower_data[tower_type]["range"] / 700.0
-	range_texture.scale = Vector2(scaling, scaling)
+	var tower_res: TowerResource = GameData.tower_data.get(tower_type)
+	if tower_res:
+		var scaling = tower_res.range_radius / 700.0
+		range_texture.scale = Vector2(scaling, scaling)
+	else:
+		push_error("TowerResource não encontrado no GameData para a chave: " + tower_type)
 	range_texture.texture = load("res://Assets/UI/range_overlay.png")
 	range_texture.modulate = Color("45454556")
-	
 	var control = Control.new()
 	control.name = "TowerPreview"
-	
-
 	control.add_child(range_texture)
 	control.add_child(drag_tower)
-	
 	control.position = get_viewport().get_mouse_position()
-	
 	add_child(control)
 	move_child(control, 0)
 

@@ -1,22 +1,20 @@
 extends Node
 
-var tower_data: Dictionary = {
-	"GunT1": {
-		"damage": 20,
-		"rof": 0.3,
-		"range": 350,
-		"category": "Projectile"
-	},
-	"GunT2": {
-		"damage": 45,
-		"rof": 0.25,
-		"range": 400,
-		"category": "Projectile"
-	},
-	"MissileT1": {
-		"damage": 100,
-		"rof": 2.0,
-		"range": 450,
-		"category": "Missile"
+var tower_data: Dictionary = {}
+var enemy_data: Dictionary = {}
+
+func _ready() -> void:
+	tower_data = {
+		"GunT1": load_resource("res://Resources/Data/Towers/GunT1.tres"),
+		"MissileT1": load_resource("res://Resources/Data/Towers/MissileT1.tres")
 	}
-}
+	
+	enemy_data = {
+		"blue_tank": load_resource("res://Resources/Data/Enemies/BlueTank.tres")
+	}
+
+func load_resource(path: String) -> Resource:
+	if ResourceLoader.exists(path):
+		return load(path)
+	push_warning("Recurso não encontrado no caminho: " + path)
+	return null
