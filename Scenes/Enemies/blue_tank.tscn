@@ -8,6 +8,7 @@
 size = Vector2(40, 20)
 
 [node name="BlueTank" type="PathFollow2D" unique_id=1440403957]
+loop = false
 script = ExtResource("1_a3nyt")
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=1221246533]

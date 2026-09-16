@@ -1,8 +1,13 @@
 [gd_scene format=3 uid="uid://c63o3pgryebr5"]
 
 [ext_resource type="Texture2D" uid="uid://dcvc58m3gtbjo" path="res://Assets/Towers/towerDefense_tile181.png" id="1_akdok"]
-[ext_resource type="Script" path="res://Scenes/Turrets/GunT2.gd" id="1_civkx"]
+[ext_resource type="Script" uid="uid://dsjhw1gccjfa4" path="res://Scenes/Turrets/GunT2.gd" id="1_civkx"]
 [ext_resource type="Texture2D" uid="uid://ggjk5oon84a4" path="res://Assets/Towers/towerDefense_tile250.png" id="2_41row"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_civkx"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wmjff"]
+size = Vector2(50, 50)
 
 [node name="GunT2" type="Node2D" unique_id=1008964600]
 script = ExtResource("1_civkx")
@@ -19,3 +24,17 @@ position = Vector2(41, 6)
 
 [node name="Muzzle2" type="Marker2D" parent="Turret" unique_id=1102877091]
 position = Vector2(41, -6)
+
+[node name="Range" type="Area2D" parent="." unique_id=1555701578]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Range" unique_id=769503647]
+shape = SubResource("CircleShape2D_civkx")
+
+[node name="ClickArea" type="Area2D" parent="." unique_id=242164230]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea" unique_id=1512580035]
+shape = SubResource("RectangleShape2D_wmjff")
+
+[connection signal="body_entered" from="Range" to="." method="_on_range_body_entered"]
+[connection signal="body_exited" from="Range" to="." method="_on_range_body_exited"]
+[connection signal="input_event" from="ClickArea" to="." method="_on_click_area_input_event"]

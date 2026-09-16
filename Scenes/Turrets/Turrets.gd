@@ -12,10 +12,7 @@ var can_fire: bool = true
 
 func _ready() -> void:
 	if built and tower_resource:
-		if has_node("Range/CollisionShape2D"):
-			var range_shape = $Range/CollisionShape2D.shape.duplicate()
-			range_shape.radius = 0.5 * tower_resource.range_radius
-			$Range/CollisionShape2D.shape = range_shape
+		update_range_shape()
 
 func _physics_process(_delta: float) -> void:
 	if enemy_array.size() != 0 and built:
@@ -26,13 +23,34 @@ func _physics_process(_delta: float) -> void:
 	else:
 		enemy = null
 
+func update_range_shape() -> void:
+	if has_node("Range/CollisionShape2D") and tower_resource:
+		var range_shape = $Range/CollisionShape2D.shape.duplicate()
+		range_shape.radius = 0.5 * tower_resource.range_radius
+		$Range/CollisionShape2D.shape = range_shape
+
+func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
+	if built and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var canvas_ui = get_tree().root.get_node_or_null("GameScene/UI")
+		var upgrade_panel = null
+		
+		if canvas_ui:
+			upgrade_panel = canvas_ui.get_node_or_null("UpgradePanel")
+		
+		if upgrade_panel == null:
+			upgrade_panel = get_tree().root.find_child("UpgradePanel", true, false)
+			
+		if upgrade_panel and upgrade_panel.has_method("open_panel"):
+			upgrade_panel.open_panel(self)
+		else:
+			print("ERRO: UpgradePanel não foi encontrado dentro da nó UI do GameScene ou não possui o script 'upgrade_panel.gd' anexado.")
+
 func turn() -> void:
 	if is_instance_valid(enemy) and turret:
 		turret.look_at(enemy.global_position)
 
 func select_enemy() -> void:
 	var enemy_progress_array = []
-	
 	for i in enemy_array:
 		if is_instance_valid(i):
 			enemy_progress_array.append(i.progress)
@@ -44,10 +62,8 @@ func select_enemy() -> void:
 
 func fire() -> void:
 	can_fire = false
-	
 	if is_instance_valid(enemy) and tower_resource:
 		enemy.on_hit(tower_resource.damage)
-		
 	await get_tree().create_timer(tower_resource.rof).timeout
 	can_fire = true
 

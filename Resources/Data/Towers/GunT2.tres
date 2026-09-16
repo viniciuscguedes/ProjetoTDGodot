@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="TowerResource" format=3 uid="uid://df4gnkywh0cw3"]
+
+[ext_resource type="Texture2D" uid="uid://ggjk5oon84a4" path="res://Assets/Towers/towerDefense_tile250.png" id="1_2wmfd"]
+[ext_resource type="Script" uid="uid://bxrklaenrp37d" path="res://Resources/CustomResources/TowerResources.gd" id="1_gvurp"]
+
+[resource]
+script = ExtResource("1_gvurp")
+tower_name = "GunT2"
+damage = 70
+rof = 0.2
+range_radius = 400.0
+icon = ExtResource("1_2wmfd")
+metadata/_custom_type_script = "uid://bxrklaenrp37d"

@@ -1,11 +1,14 @@
 [gd_resource type="Resource" script_class="TowerResource" format=3 uid="uid://dab558f8a1x8u"]
 
+[ext_resource type="Texture2D" uid="uid://cgoghipov7klx" path="res://Assets/Towers/towerDefense_tile251.png" id="1_r3kt8"]
 [ext_resource type="Script" uid="uid://bxrklaenrp37d" path="res://Resources/CustomResources/TowerResources.gd" id="1_w6puk"]
 
 [resource]
 script = ExtResource("1_w6puk")
+tower_name = "MissileT1"
 damage = 100
 rof = 3.0
 range_radius = 700.0
 category = "Missile"
+icon = ExtResource("1_r3kt8")
 metadata/_custom_type_script = "uid://bxrklaenrp37d"

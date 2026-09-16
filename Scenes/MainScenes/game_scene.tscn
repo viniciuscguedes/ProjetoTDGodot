@@ -9,6 +9,10 @@
 [ext_resource type="Texture2D" uid="uid://u875q7x7j7hx" path="res://Assets/Icons/right.png" id="7_2usgn"]
 [ext_resource type="Texture2D" uid="uid://cwpht0niq7vjf" path="res://Assets/Icons/pause.png" id="8_674w2"]
 [ext_resource type="Texture2D" uid="uid://dvx1c0tsfy1aj" path="res://Assets/Icons/fastForward.png" id="9_674w2"]
+[ext_resource type="FontFile" uid="uid://05gtyksl7hy" path="res://Assets/Fonts/Kenney Future Narrow.ttf" id="10_0h1f8"]
+[ext_resource type="PackedScene" uid="uid://dx45fuhh6t1ot" path="res://Scenes/UIScenes/upgrade_panel.tscn" id="10_a0jnf"]
+[ext_resource type="Texture2D" uid="uid://b5r4f525d8c7g" path="res://Assets/UI/HPbar.jpg" id="11_sl8sw"]
+[ext_resource type="Texture2D" uid="uid://cip80f530567l" path="res://Assets/Icons/home.png" id="12_jvyjn"]
 
 [node name="GameScene" type="Node2D" unique_id=1819468004]
 script = ExtResource("1_2u2le")
@@ -98,6 +102,71 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 texture_normal = ExtResource("9_674w2")
 stretch_mode = 0
+
+[node name="InfoBar" type="ColorRect" parent="UI/HUD" unique_id=1713436137]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 1
+offset_top = -360.0
+offset_right = 1280.0
+offset_bottom = -300.0
+color = Color(0, 0, 0, 0.47058824)
+
+[node name="Symbol" type="Label" parent="UI/HUD/InfoBar" unique_id=1041458536]
+custom_minimum_size = Vector2(120, 60)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("10_0h1f8")
+theme_override_font_sizes/font_size = 50
+text = "$"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Money" type="Label" parent="UI/HUD/InfoBar" unique_id=1043484713]
+custom_minimum_size = Vector2(240, 60)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.47058824)
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("10_0h1f8")
+theme_override_font_sizes/font_size = 50
+text = "100"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="HealthBar" type="TextureProgressBar" parent="UI/HUD/InfoBar" unique_id=1407990533]
+layout_mode = 0
+offset_left = 800.0
+offset_top = 6.0
+offset_right = 1200.0
+offset_bottom = 53.0
+nine_patch_stretch = true
+texture_under = ExtResource("11_sl8sw")
+texture_progress = ExtResource("11_sl8sw")
+tint_under = Color(0.20784314, 0.20784314, 0.20784314, 1)
+tint_progress = Color(0, 1, 0, 1)
+
+[node name="Base" type="TextureRect" parent="UI/HUD/InfoBar" unique_id=1996829690]
+layout_mode = 0
+offset_left = 730.0
+offset_top = 1.0
+offset_right = 852.0
+offset_bottom = 123.0
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("12_jvyjn")
+
+[node name="UpgradePanel" parent="." unique_id=2098660431 instance=ExtResource("10_a0jnf")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 729.0
+offset_top = 386.0
+offset_right = 729.0
+offset_bottom = 386.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [connection signal="pressed" from="UI/HUD/GameControls/PausePlay" to="UI" method="_on_pause_play_pressed"]
 [connection signal="pressed" from="UI/HUD/GameControls/SpeedUp" to="UI" method="_on_speed_up_pressed"]
