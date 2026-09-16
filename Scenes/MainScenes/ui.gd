@@ -53,11 +53,12 @@ func update_tower_preview(_new_position, color):
 func _on_pause_play_pressed() -> void:
 	if get_parent().build_mode:
 		get_parent().cancel_build_mode()
-	if get_tree().is_paused():
-		get_tree().paused = false
-	elif get_parent().current_wave == 0:
-		get_parent().current_wave += 1
+		
+	if get_parent().current_wave == 0:
 		get_parent().start_next_wave()
+		get_tree().paused = false
+	elif get_tree().is_paused():
+		get_tree().paused = false
 	else:
 		get_tree().paused = true
 		

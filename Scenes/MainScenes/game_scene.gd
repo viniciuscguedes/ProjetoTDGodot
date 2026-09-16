@@ -1,18 +1,44 @@
 extends Node2D
 
-var map_node: Node2D 
+@export var map_resource: MapResource 
 
+
+var money: int = 0
+var max_waves: int = 0
+var wave_reward: int = 0
+
+var current_wave: int = 0
+var enemies_in_wave: int = 0
+var active_enemies_count: int = 0
+
+
+var map_node: Node2D 
 var build_mode: bool = false
 var build_valid: bool = false 
 var build_tile: Vector2i
 var build_location: Vector2
 var build_type: String 
 
-var current_wave: int = 0
-var enemies_in_wave: int = 0
+
+@onready var wave_label: Label = get_node_or_null("UI/HUD/InfoBar/WaveLabel")
+@onready var money_label: Label = get_node_or_null("UI/HUD/InfoBar/Money")
 
 func _ready() -> void:
-	map_node = get_node("Map1")
+
+	if map_resource:
+		money = map_resource.starting_money
+		max_waves = map_resource.max_waves
+		wave_reward = map_resource.wave_reward
+	
+	map_node = get_node_or_null("Map1")
+	
+
+	if not money_label:
+		money_label = find_child("Money", true, false)
+		
+	_update_money_ui()
+	_setup_tower_button_costs()
+	
 	for i in get_tree().get_nodes_in_group("build_buttons"):
 		i.pressed.connect(initiate_build_mode.bind(i.name))
 
@@ -26,6 +52,23 @@ func _unhandled_input(event: InputEvent) -> void:
 			cancel_build_mode()
 		elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 			verify_and_build()
+
+
+func _setup_tower_button_costs() -> void:
+	var build_bar = get_node_or_null("UI/HUD/BuildBar")
+	if not build_bar:
+		return
+
+	for button in build_bar.get_children():
+		var tower_key = button.name + "T1"
+		var res: TowerResource = GameData.tower_data.get(tower_key)
+		
+		if res:
+			var cost_label = button.get_node_or_null("Label")
+			if cost_label:
+				var cost_value = res.cost if "cost" in res else 100
+				cost_label.text = "$" + str(cost_value)
+
 
 func initiate_build_mode(tower_type: String) -> void:
 	if build_mode:
@@ -66,33 +109,89 @@ func verify_and_build() -> void:
 	if build_valid:
 		var res: TowerResource = GameData.tower_data.get(build_type)
 		if res:
-			var tower_scene = load("res://Scenes/Turrets/" + build_type + ".tscn")
-			var new_tower = tower_scene.instantiate()
+			var tower_cost = res.cost if "cost" in res else 100
 			
-			new_tower.global_position = build_location
-			new_tower.tower_resource = res
-			new_tower.built = true
-			
-			map_node.get_node("Turrets").add_child(new_tower, true)
-			map_node.get_node("TowerExclusion").set_cell(build_tile, 0, Vector2i(0, 0))
-			
-			cancel_build_mode()
+			if spend_money(tower_cost):
+				var tower_scene = load("res://Scenes/Turrets/" + build_type + ".tscn")
+				var new_tower = tower_scene.instantiate()
+				
+				new_tower.global_position = build_location
+				new_tower.tower_resource = res
+				new_tower.built = true
+				
+				map_node.get_node("Turrets").add_child(new_tower, true)
+				map_node.get_node("TowerExclusion").set_cell(build_tile, 0, Vector2i(0, 0))
+				
+				cancel_build_mode()
+			else:
+				print("Dinheiro insuficiente!")
+
+
+func add_money(amount: int) -> void:
+	money += amount
+	_update_money_ui()
+
+func spend_money(amount: int) -> bool:
+	if money >= amount:
+		money -= amount
+		_update_money_ui()
+		return true
+	return false
+
+func upgrade_tower(tower_node: Node, upgrade_cost: int, new_resource: TowerResource) -> void:
+	if upgrade_cost == 0 or spend_money(upgrade_cost):
+		tower_node.tower_resource = new_resource
+
+func sell_tower(tower_node: Node, sell_price: int, tile_position: Vector2i) -> void:
+	add_money(sell_price)
+	map_node.get_node("TowerExclusion").erase_cell(tile_position)
+	tower_node.queue_free()
+
+func _update_money_ui() -> void:
+	if not money_label:
+		money_label = find_child("Money", true, false)
+		
+	if money_label:
+		money_label.text = str(money)
+
 
 func start_next_wave() -> void:
+	if current_wave >= max_waves:
+		_game_won()
+		return
+
 	var wave_data = retrieve_wave_data()
+	_update_wave_ui()
 	await get_tree().create_timer(0.2).timeout
 	spawn_enemies(wave_data)
 
 func retrieve_wave_data() -> Array:
-	var wave_data = [["blue_tank", 3.0], ["blue_tank", 0.1]]
 	current_wave += 1
+	var wave_data = []
+	
+	var enemy_count = 1 + (current_wave * 2)
+	
+	for i in range(enemy_count):
+		var spawn_delay = randf_range(0.5, 1.2)
+		wave_data.append(["blue_tank", spawn_delay])
+		
 	enemies_in_wave = wave_data.size()
+	active_enemies_count = enemies_in_wave
 	return wave_data
 
 func spawn_enemies(wave_data: Array) -> void:
-	var path_1 = map_node.get_node("Path1")
-	var path_2 = map_node.get_node("Path2")
-	var paths = [path_1, path_2]
+	var paths = []
+	
+	if map_resource and map_resource.path_node_names.size() > 0:
+		for path_name in map_resource.path_node_names:
+			var p = map_node.get_node_or_null(path_name)
+			if p:
+				paths.append(p)
+	else:
+		var p1 = map_node.get_node_or_null("Path1")
+		var p2 = map_node.get_node_or_null("Path2")
+		if p1: paths.append(p1)
+		if p2: paths.append(p2)
 
 	for i in wave_data:
 		var enemy_type = i[0]
@@ -104,7 +203,35 @@ func spawn_enemies(wave_data: Array) -> void:
 		if "enemy_resource" in new_enemy:
 			new_enemy.enemy_resource = res
 			
-		var chosen_path = paths.pick_random()
-		chosen_path.add_child(new_enemy, true)
+		if paths.size() > 0:
+			var chosen_path = paths.pick_random()
+			chosen_path.add_child(new_enemy, true)
+		else:
+			map_node.add_child(new_enemy, true)
 		
 		await get_tree().create_timer(i[1]).timeout
+
+func on_enemy_removed() -> void:
+	active_enemies_count -= 1
+	
+	if active_enemies_count <= 0:
+		print("Wave ", current_wave, " concluída!")
+		add_money(wave_reward)
+		
+		if current_wave >= max_waves:
+			_game_won()
+		else:
+			await get_tree().create_timer(3.0).timeout
+			start_next_wave()
+
+func _update_wave_ui() -> void:
+	if not wave_label:
+		wave_label = find_child("WaveLabel", true, false)
+		
+	if wave_label:
+		wave_label.text = "WAVE " + str(current_wave)
+
+func _game_won() -> void:
+	print("VITÓRIA! Você defendeu todas as ondas.")
+	await get_tree().create_timer(2.0).timeout
+	get_tree().change_scene_to_file("res://Scenes/UIScenes/main_menu.tscn")

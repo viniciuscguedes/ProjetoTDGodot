@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://d3f4imsrfyyr8" path="res://Scenes/MainScenes/game_scene.gd" id="1_2u2le"]
 [ext_resource type="PackedScene" uid="uid://bnm3i13dfm2bu" path="res://Scenes/Maps/Map1.tscn" id="1_akvmk"]
 [ext_resource type="Texture2D" uid="uid://d07uoyycbfkbl" path="res://Assets/UI/Buttons/button_square_depth_flat.png" id="2_3x1ga"]
+[ext_resource type="Resource" uid="uid://dive7cwu8rmtw" path="res://Resources/Data/Maps/Map1.tres" id="2_sl8sw"]
 [ext_resource type="Texture2D" uid="uid://bovoblaoptslx" path="res://Assets/Towers/towerDefense_tile249.png" id="3_2u2le"]
 [ext_resource type="Script" uid="uid://goxc7ieuxtlm" path="res://Scenes/MainScenes/ui.gd" id="3_g2kuy"]
 [ext_resource type="Texture2D" uid="uid://cgoghipov7klx" path="res://Assets/Towers/towerDefense_tile251.png" id="4_g2kuy"]
@@ -16,6 +17,7 @@
 
 [node name="GameScene" type="Node2D" unique_id=1819468004]
 script = ExtResource("1_2u2le")
+map_resource = ExtResource("2_sl8sw")
 
 [node name="Map1" parent="." unique_id=2065031549 instance=ExtResource("1_akvmk")]
 
@@ -55,6 +57,19 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_2u2le")
 
+[node name="Label" type="Label" parent="UI/HUD/BuildBar/Gun" unique_id=353696920]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 50.0
+offset_right = 65.0
+offset_bottom = 75.0
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("10_0h1f8")
+theme_override_font_sizes/font_size = 20
+text = "$100"
+horizontal_alignment = 1
+vertical_alignment = 2
+
 [node name="Missile" type="TextureButton" parent="UI/HUD/BuildBar" unique_id=743100532 groups=["build_buttons"]]
 custom_minimum_size = Vector2(100, 80)
 layout_mode = 2
@@ -71,6 +86,19 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("4_g2kuy")
+
+[node name="Label" type="Label" parent="UI/HUD/BuildBar/Missile" unique_id=1140839515]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 50.0
+offset_right = 65.0
+offset_bottom = 75.0
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("10_0h1f8")
+theme_override_font_sizes/font_size = 20
+text = "$100"
+horizontal_alignment = 1
+vertical_alignment = 2
 
 [node name="GameControls" type="HBoxContainer" parent="UI/HUD" unique_id=468873405]
 layout_mode = 1
@@ -114,8 +142,9 @@ color = Color(0, 0, 0, 0.47058824)
 [node name="Symbol" type="Label" parent="UI/HUD/InfoBar" unique_id=1041458536]
 custom_minimum_size = Vector2(120, 60)
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_left = 223.0
+offset_right = 343.0
+offset_bottom = 60.0
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("10_0h1f8")
 theme_override_font_sizes/font_size = 50
@@ -126,8 +155,9 @@ vertical_alignment = 1
 [node name="Money" type="Label" parent="UI/HUD/InfoBar" unique_id=1043484713]
 custom_minimum_size = Vector2(240, 60)
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_left = 223.0
+offset_right = 463.0
+offset_bottom = 60.0
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.47058824)
 theme_override_constants/outline_size = 5
 theme_override_fonts/font = ExtResource("10_0h1f8")
@@ -156,6 +186,29 @@ offset_right = 852.0
 offset_bottom = 123.0
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("12_jvyjn")
+
+[node name="Wave" type="Label" parent="UI/HUD/InfoBar" unique_id=1127452903]
+custom_minimum_size = Vector2(150, 60)
+layout_mode = 0
+offset_left = 30.0
+offset_right = 180.0
+offset_bottom = 60.0
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("10_0h1f8")
+theme_override_font_sizes/font_size = 50
+text = "Wave"
+
+[node name="NumberWave" type="Label" parent="UI/HUD/InfoBar" unique_id=513462882]
+custom_minimum_size = Vector2(100, 60)
+layout_mode = 0
+offset_left = 150.0
+offset_right = 250.0
+offset_bottom = 60.0
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("10_0h1f8")
+theme_override_font_sizes/font_size = 50
+text = "1"
+horizontal_alignment = 1
 
 [node name="UpgradePanel" parent="." unique_id=2098660431 instance=ExtResource("10_a0jnf")]
 anchors_preset = 0

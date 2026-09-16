@@ -11,4 +11,5 @@ rof = 3.0
 range_radius = 700.0
 category = "Missile"
 icon = ExtResource("1_r3kt8")
+cost = 200
 metadata/_custom_type_script = "uid://bxrklaenrp37d"

@@ -41,9 +41,19 @@ func open_panel(turret: Node2D) -> void:
 	
 	sell_button.text = "Vender ($%d)" % res.sell_value
 	
+	# Busca a GameScene para validar o saldo do jogador
+	var game_scene = get_tree().current_scene
+	if not game_scene or not "money" in game_scene:
+		game_scene = get_tree().root.find_child("GameScene", true, false)
+
 	if res.next_upgrade:
 		upgrade_button.text = "Upgrade ($%d)" % res.upgrade_cost
-		upgrade_button.disabled = false
+		
+		# Valida se o jogador tem dinheiro suficiente para habilitar o botão
+		if game_scene and game_scene.money >= res.upgrade_cost:
+			upgrade_button.disabled = false
+		else:
+			upgrade_button.disabled = true
 	else:
 		upgrade_button.text = "Nível Máximo"
 		upgrade_button.disabled = true
@@ -67,6 +77,22 @@ func close_panel() -> void:
 
 func _on_sell_pressed() -> void:
 	if is_instance_valid(current_turret):
+		var res: TowerResource = current_turret.tower_resource
+		var game_scene = get_tree().current_scene
+		
+		if not game_scene or not game_scene.has_method("add_money"):
+			game_scene = get_tree().root.find_child("GameScene", true, false)
+			
+		if game_scene and game_scene.has_method("add_money") and res:
+			game_scene.add_money(res.sell_value)
+
+		var map_node = game_scene.get_node_or_null("Map1") if game_scene else null
+		if map_node:
+			var exclusion = map_node.get_node_or_null("TowerExclusion")
+			if exclusion:
+				var cell_pos = exclusion.local_to_map(current_turret.global_position)
+				exclusion.erase_cell(cell_pos)
+
 		current_turret.queue_free()
 	close_panel()
 
@@ -74,11 +100,21 @@ func _on_upgrade_pressed() -> void:
 	if not is_instance_valid(current_turret) or not current_turret.tower_resource.next_upgrade:
 		return
 		
-	var next_res: TowerResource = current_turret.tower_resource.next_upgrade
+	var current_res: TowerResource = current_turret.tower_resource
+	var next_res: TowerResource = current_res.next_upgrade
 	
 	if next_res.tower_name == "":
 		print("ERRO: O campo 'tower_name' no TowerResource de upgrade está vazio!")
 		return
+
+	var game_scene = get_tree().current_scene
+	if not game_scene or not game_scene.has_method("spend_money"):
+		game_scene = get_tree().root.find_child("GameScene", true, false)
+
+	if game_scene and game_scene.has_method("spend_money"):
+		if not game_scene.spend_money(current_res.upgrade_cost):
+			print("Dinheiro insuficiente para o upgrade!")
+			return
 
 	var parent_node = current_turret.get_parent()
 	var old_position = current_turret.global_position
@@ -97,5 +133,3 @@ func _on_upgrade_pressed() -> void:
 		current_turret.queue_free()
 		
 		open_panel(new_turret)
-	else:
-		print("ERRO: A cena não existe no caminho: ", new_tower_scene_path)

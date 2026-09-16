@@ -10,4 +10,5 @@ damage = 70
 rof = 0.2
 range_radius = 400.0
 icon = ExtResource("1_2wmfd")
+sell_value = 100
 metadata/_custom_type_script = "uid://bxrklaenrp37d"
