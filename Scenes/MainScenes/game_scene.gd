@@ -226,7 +226,7 @@ func spawn_enemies(wave_data: Array) -> void:
 		else:
 			map_node.add_child(new_enemy, true)
 		
-		await get_tree().create_timer(i[1]).timeout
+		await get_tree().create_timer(i[1], false, false, true).timeout
 
 func on_enemy_removed() -> void:
 	active_enemies_count -= 1
@@ -241,7 +241,8 @@ func on_enemy_removed() -> void:
 		if current_wave > max_waves:
 			_game_won()
 		else:
-			get_tree().paused = true
+			await get_tree().create_timer(1.5, false, false, true).timeout
+			start_next_wave()
 
 func _update_wave_ui() -> void:
 	if not wave_label:
