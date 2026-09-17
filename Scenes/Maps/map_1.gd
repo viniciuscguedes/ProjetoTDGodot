@@ -27,8 +27,19 @@ func _update_ui() -> void:
 		health_bar.value = current_health
 
 func game_over() -> void:
-	get_tree().change_scene_to_file("res://Scenes/UIScenes/main_menu.tscn")
+	var game_scene = get_tree().current_scene
+	
+	if not game_scene or not game_scene.has_method("_game_over"):
+		var parent = get_parent()
+		while parent != null:
+			if parent.has_method("_game_over"):
+				game_scene = parent
+				break
+			parent = parent.get_parent()
 
+	if game_scene and game_scene.has_method("_game_over"):
+		game_scene._game_over()
+	
 func _on_base_end_area_body_entered(body: Node2D) -> void:
 	_handle_enemy_damage(body)
 
@@ -42,7 +53,7 @@ func _handle_enemy_damage(incoming_node: Node) -> void:
 	if "enemy_resource" in incoming_node and incoming_node.enemy_resource:
 		enemy_resource = incoming_node.enemy_resource
 	elif incoming_node.get_parent() and "enemy_resource" in incoming_node.get_parent():
-		enemy_resource = incoming_node.get_parent().enemy_resource
+		enemy_resource = incoming_node.enemy_resource
 		node_to_free = incoming_node.get_parent()
 
 	if enemy_resource:

@@ -1,16 +1,21 @@
 extends Node2D
 
-@export var map_resource: MapResource 
-
+@export var map_resource: MapResource
+@export var victory_scene_path: String = "res://Scenes/UIScenes/victory_screen.tscn"
+@export var defeat_scene_path: String = "res://Scenes/UIScenes/defeat_screen.tscn"
 
 var money: int = 0
-var max_waves: int = 0
-var wave_reward: int = 0
-
 var current_wave: int = 0
 var enemies_in_wave: int = 0
 var active_enemies_count: int = 0
 
+var max_waves: int:
+	get:
+		return map_resource.max_waves if map_resource else 10
+
+var wave_reward: int:
+	get:
+		return map_resource.wave_reward if map_resource else 50
 
 var map_node: Node2D 
 var build_mode: bool = false
@@ -19,19 +24,16 @@ var build_tile: Vector2i
 var build_location: Vector2
 var build_type: String 
 
-
 @onready var wave_label: Label = get_node_or_null("UI/HUD/InfoBar/WaveLabel")
 @onready var money_label: Label = get_node_or_null("UI/HUD/InfoBar/Money")
 
 func _ready() -> void:
-
 	if map_resource:
 		money = map_resource.starting_money
-		max_waves = map_resource.max_waves
-		wave_reward = map_resource.wave_reward
+	else:
+		money = 100
 	
 	map_node = get_node_or_null("Map1")
-	
 
 	if not money_label:
 		money_label = find_child("Money", true, false)
@@ -81,17 +83,30 @@ func initiate_build_mode(tower_type: String) -> void:
 	update_tower_preview()
 
 func update_tower_preview() -> void:
-	var mouse_position = get_global_mouse_position()
-	var current_tile = map_node.get_node("TowerExclusion").local_to_map(mouse_position)
-	var title_position = map_node.get_node("TowerExclusion").map_to_local(current_tile)
+	if not map_node:
+		return
+		
+	var exclusion_layer: TileMapLayer = map_node.get_node_or_null("TowerExclusion")
 	
-	if map_node.get_node("TowerExclusion").get_cell_source_id(current_tile) == -1:
-		get_node("UI").update_tower_preview(title_position, "00FF00")
+	if not exclusion_layer:
+		print("ERRO: Camada 'TowerExclusion' não encontrada no Map!")
+		return
+
+	var mouse_global_pos = get_global_mouse_position()
+	var mouse_local_pos = exclusion_layer.to_local(mouse_global_pos)
+	
+	build_tile = exclusion_layer.local_to_map(mouse_local_pos)
+	
+	var snapped_local_pos = exclusion_layer.map_to_local(build_tile)
+	build_location = exclusion_layer.to_global(snapped_local_pos)
+
+	var cell_id = exclusion_layer.get_cell_source_id(build_tile)
+	
+	if cell_id == -1:
+		get_node("UI").update_tower_preview(build_location, "00FF00")
 		build_valid = true 
-		build_location = title_position
-		build_tile = current_tile
 	else:
-		get_node("UI").update_tower_preview(title_position, "FF0000")
+		get_node("UI").update_tower_preview(build_location, "FF0000")
 		build_valid = false
 
 func cancel_build_mode() -> void:
@@ -232,6 +247,11 @@ func _update_wave_ui() -> void:
 		wave_label.text = "WAVE " + str(current_wave)
 
 func _game_won() -> void:
-	print("VITÓRIA! Você defendeu todas as ondas.")
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(1.0).timeout
+	get_tree().change_scene_to_file(victory_scene_path)
+	await get_tree().create_timer(1.0).timeout
 	get_tree().change_scene_to_file("res://Scenes/UIScenes/main_menu.tscn")
+	
+func _game_over() -> void:
+	await get_tree().create_timer(1.0).timeout
+	get_tree().change_scene_to_file(defeat_scene_path)

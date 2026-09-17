@@ -33,13 +33,13 @@ func set_tower_preview(tower_type: String, _mouse_position: Vector2) -> void:
 	add_child(control)
 	move_child(control, 0)
 
-func update_tower_preview(_new_position, color):
+func update_tower_preview(snapped_position: Vector2, color: String) -> void:
 	var tower_preview = get_node_or_null("TowerPreview")
 	if tower_preview == null:
 		tower_preview = get_node_or_null("HUD/TowerPreview")
 	
 	if tower_preview:
-		tower_preview.position = get_viewport().get_mouse_position()
+		tower_preview.global_position = snapped_position
 		
 		var drag_tower = tower_preview.get_node_or_null("DragTower")
 		if drag_tower:
