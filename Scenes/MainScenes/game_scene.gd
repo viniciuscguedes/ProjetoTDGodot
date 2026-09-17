@@ -39,6 +39,7 @@ func _ready() -> void:
 		money_label = find_child("Money", true, false)
 		
 	_update_money_ui()
+	_update_wave_ui()
 	_setup_tower_button_costs()
 	
 	for i in get_tree().get_nodes_in_group("build_buttons"):
@@ -55,7 +56,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 			verify_and_build()
 
-
 func _setup_tower_button_costs() -> void:
 	var build_bar = get_node_or_null("UI/HUD/BuildBar")
 	if not build_bar:
@@ -70,7 +70,6 @@ func _setup_tower_button_costs() -> void:
 			if cost_label:
 				var cost_value = res.cost if "cost" in res else 100
 				cost_label.text = "$" + str(cost_value)
-
 
 func initiate_build_mode(tower_type: String) -> void:
 	if build_mode:
@@ -141,7 +140,6 @@ func verify_and_build() -> void:
 			else:
 				print("Dinheiro insuficiente!")
 
-
 func add_money(amount: int) -> void:
 	money += amount
 	_update_money_ui()
@@ -169,29 +167,31 @@ func _update_money_ui() -> void:
 	if money_label:
 		money_label.text = str(money)
 
+# --- SISTEMA DE ONDAS (WAVES) ---
 
 func start_next_wave() -> void:
-	if current_wave >= max_waves:
+	if current_wave == 0:
+		current_wave = 1
+
+	if current_wave > max_waves:
 		_game_won()
 		return
 
-	var wave_data = retrieve_wave_data()
 	_update_wave_ui()
-	await get_tree().create_timer(0.2).timeout
-	spawn_enemies(wave_data)
+	var wave_data = retrieve_wave_data()
+	await spawn_enemies(wave_data)
 
 func retrieve_wave_data() -> Array:
-	current_wave += 1
 	var wave_data = []
-	
-	var enemy_count = 1 + (current_wave * 2)
+	var active_wave = max(1, current_wave)
+	var enemy_count = 1 + (active_wave * 2)
 	
 	for i in range(enemy_count):
-		var spawn_delay = randf_range(0.5, 1.2)
+		var spawn_delay = randf_range(0.8, 1.5)
 		wave_data.append(["blue_tank", spawn_delay])
 		
 	enemies_in_wave = wave_data.size()
-	active_enemies_count = enemies_in_wave
+	active_enemies_count = 0
 	return wave_data
 
 func spawn_enemies(wave_data: Array) -> void:
@@ -218,6 +218,8 @@ func spawn_enemies(wave_data: Array) -> void:
 		if "enemy_resource" in new_enemy:
 			new_enemy.enemy_resource = res
 			
+		active_enemies_count += 1
+			
 		if paths.size() > 0:
 			var chosen_path = paths.pick_random()
 			chosen_path.add_child(new_enemy, true)
@@ -233,24 +235,25 @@ func on_enemy_removed() -> void:
 		print("Wave ", current_wave, " concluída!")
 		add_money(wave_reward)
 		
-		if current_wave >= max_waves:
+		current_wave += 1
+		_update_wave_ui()
+		
+		if current_wave > max_waves:
 			_game_won()
 		else:
-			await get_tree().create_timer(3.0).timeout
-			start_next_wave()
+			get_tree().paused = true
 
 func _update_wave_ui() -> void:
 	if not wave_label:
-		wave_label = find_child("WaveLabel", true, false)
+		wave_label = find_child("NumberWave", true, false)
 		
 	if wave_label:
-		wave_label.text = "WAVE " + str(current_wave)
+		var wave_display = max(1, current_wave)
+		wave_label.text = str(wave_display)
 
 func _game_won() -> void:
 	await get_tree().create_timer(1.0).timeout
 	get_tree().change_scene_to_file(victory_scene_path)
-	await get_tree().create_timer(1.0).timeout
-	get_tree().change_scene_to_file("res://Scenes/UIScenes/main_menu.tscn")
 	
 func _game_over() -> void:
 	await get_tree().create_timer(1.0).timeout

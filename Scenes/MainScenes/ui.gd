@@ -1,6 +1,5 @@
 extends CanvasLayer
 
-
 func set_tower_preview(tower_type: String, _mouse_position: Vector2) -> void:
 	var old_preview = get_node_or_null("TowerPreview")
 	if old_preview == null:
@@ -23,8 +22,10 @@ func set_tower_preview(tower_type: String, _mouse_position: Vector2) -> void:
 		range_texture.scale = Vector2(scaling, scaling)
 	else:
 		push_error("TowerResource não encontrado no GameData para a chave: " + tower_type)
+		
 	range_texture.texture = load("res://Assets/UI/range_overlay.png")
 	range_texture.modulate = Color("45454556")
+	
 	var control = Control.new()
 	control.name = "TowerPreview"
 	control.add_child(range_texture)
@@ -48,7 +49,6 @@ func update_tower_preview(snapped_position: Vector2, color: String) -> void:
 		var range_sprite = tower_preview.get_node_or_null("RangeOverlay")
 		if range_sprite:
 			range_sprite.modulate = Color(color)
-
 
 func _on_pause_play_pressed() -> void:
 	if get_parent().build_mode:

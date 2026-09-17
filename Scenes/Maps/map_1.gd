@@ -7,11 +7,13 @@ var health_bar: TextureProgressBar = null
 
 func _ready() -> void:
 	current_health = max_health
-	
-	health_bar = get_tree().root.find_child("HealthBar", true, false) as TextureProgressBar
-	
-	if health_bar:
-		_update_ui()
+	_find_health_bar()
+	_update_ui()
+
+func _find_health_bar() -> void:
+	var scene_root = get_tree().current_scene
+	if scene_root:
+		health_bar = scene_root.find_child("HealthBar", true, false) as TextureProgressBar
 
 func take_damage(amount: int) -> void:
 	current_health -= amount
@@ -22,6 +24,9 @@ func take_damage(amount: int) -> void:
 		game_over()
 
 func _update_ui() -> void:
+	if not health_bar:
+		_find_health_bar()
+		
 	if health_bar:
 		health_bar.max_value = max_health
 		health_bar.value = current_health
@@ -39,7 +44,7 @@ func game_over() -> void:
 
 	if game_scene and game_scene.has_method("_game_over"):
 		game_scene._game_over()
-	
+
 func _on_base_end_area_body_entered(body: Node2D) -> void:
 	_handle_enemy_damage(body)
 
@@ -53,10 +58,15 @@ func _handle_enemy_damage(incoming_node: Node) -> void:
 	if "enemy_resource" in incoming_node and incoming_node.enemy_resource:
 		enemy_resource = incoming_node.enemy_resource
 	elif incoming_node.get_parent() and "enemy_resource" in incoming_node.get_parent():
-		enemy_resource = incoming_node.enemy_resource
+		enemy_resource = incoming_node.get_parent().enemy_resource
 		node_to_free = incoming_node.get_parent()
 
 	if enemy_resource:
-		print("Dano aplicado: ", enemy_resource.base_dmg)
+		print("Dano aplicado à base: ", enemy_resource.base_dmg)
 		take_damage(enemy_resource.base_dmg)
+		
+		var game_scene = get_tree().current_scene
+		if game_scene and game_scene.has_method("on_enemy_removed"):
+			game_scene.on_enemy_removed()
+			
 		node_to_free.queue_free()
