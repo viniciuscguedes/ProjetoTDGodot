@@ -15,6 +15,7 @@ func _ready() -> void:
 		update_range_shape()
 
 func _physics_process(_delta: float) -> void:
+	# se tiverem inimigos, vamos mirar, apontar e atirar!
 	if enemy_array.size() != 0 and built:
 		select_enemy()
 		turn()
@@ -24,12 +25,15 @@ func _physics_process(_delta: float) -> void:
 		enemy = null
 
 func update_range_shape() -> void:
+	# quando criarmos a torre na cena, devemos definir o alcance dela.
+	# a variável "shape" em Range/CollisionShape2D é a área de alcance efetiva.
 	if has_node("Range/CollisionShape2D") and tower_resource:
 		var range_shape = $Range/CollisionShape2D.shape.duplicate()
 		range_shape.radius = 0.5 * tower_resource.range_radius
 		$Range/CollisionShape2D.shape = range_shape
 
 func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
+	# abre a tela de upgrades nesta torre quando ela for clicada
 	if built and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var canvas_ui = get_tree().root.get_node_or_null("GameScene/UI")
 		var upgrade_panel = null
@@ -46,33 +50,42 @@ func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: 
 			print("ERRO: UpgradePanel não foi encontrado dentro da nó UI do GameScene ou não possui o script 'upgrade_panel.gd' anexado.")
 
 func turn() -> void:
+	# rotaciona o sprite da torreta para apontar ao inimigo. a base é outro 
+	# sprite, logo permanece fixa no lugar.
 	if is_instance_valid(enemy) and turret:
 		turret.look_at(enemy.global_position)
 
 func select_enemy() -> void:
+	# lê o quão longe cada inimigo está no trilho e armazena
 	var enemy_progress_array = []
 	for i in enemy_array:
 		if is_instance_valid(i):
 			enemy_progress_array.append(i.progress)
 	
+	# busca na lista qual dos inimigos está mais longe no trilho e o seleciona
 	if enemy_progress_array.size() > 0:
 		var max_progress = enemy_progress_array.max()
 		var enemy_index = enemy_progress_array.find(max_progress)
 		enemy = enemy_array[enemy_index]
 
 func fire() -> void:
+	# dispara no inimigo selecionado
 	can_fire = false
 	if is_instance_valid(enemy) and tower_resource:
 		enemy.on_hit(tower_resource.damage)
+	
+	# aguarda um tempo passar antes de permitir disparar novamente
 	await get_tree().create_timer(tower_resource.rof).timeout
 	can_fire = true
 
 func _on_range_body_entered(body: Node2D) -> void:
+	# quando um inimigo entrar no alcance, armazenamos ele nos possíveis alvos
 	var enemy_node = body.get_parent()
 	if enemy_node and not enemy_node in enemy_array:
 		enemy_array.append(enemy_node)
 
 func _on_range_body_exited(body: Node2D) -> void:
+	# quando um inimigo sai do alcance, removemos ele dos alvos
 	var enemy_node = body.get_parent()
 	if enemy_node in enemy_array:
 		enemy_array.erase(enemy_node)
