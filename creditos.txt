@@ -1,0 +1,23 @@
+
+Vídeos tutorial de referência para criar tower defense:
+https://www.youtube.com/playlist?list=PLZ-54sd-DMAJltIzTtZ6ZhC-9hkqYXyp6 
+
+
+Sprites das torres:
+https://kenney.nl/assets/tower-defense-top-down
+
+Sprites dos tanques:
+https://kenney.nl/assets/top-down-tanks-remastered
+https://kenney.nl/assets/top-down-tanks
+
+Assets de Cursor:
+https://kenney.nl/assets/cursor-pack
+
+Assets de elementos de interface:
+https://kenney.nl/assets/ui-pack
+
+Fontes estilizadas:
+https://kenney.nl/assets/kenney-fonts
+
+Sprites de ícones:
+https://kenney.nl/assets/game-icons
